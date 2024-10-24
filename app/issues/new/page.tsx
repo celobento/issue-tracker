@@ -11,6 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 import SimpleMDE from "react-simplemde-editor";
 import { z } from "zod";
 import ErrorMessage from "../../components/ErrorMessage";
+import Spinner from "../../components/Spinner";
 import { createIssueSchema } from "../../validationSchema";
 
 type IssueForm = z.infer<typeof createIssueSchema>;
@@ -18,6 +19,7 @@ type IssueForm = z.infer<typeof createIssueSchema>;
 const NewIssuePage = () => {
   const [error, setError] = useState("");
   const router = useRouter();
+  const [isSubmitting, setSubmitting] = useState(false);
   const {
     register,
     control,
@@ -40,9 +42,11 @@ const NewIssuePage = () => {
         className={`max-w-wl space-y-3`}
         onSubmit={handleSubmit(async (data) => {
           try {
+            setSubmitting(true);
             await axios.post("/api/issues", data);
             router.push("/issues");
           } catch (error) {
+            setSubmitting(false);
             setError("An unexpected error occurred.");
           }
         })}
@@ -64,7 +68,10 @@ const NewIssuePage = () => {
         />
         <ErrorMessage>{errors.description?.message}</ErrorMessage>
 
-        <Button>Submit New issue</Button>
+        <Button disabled={isSubmitting}>
+          Submit New issue
+          {isSubmitting && <Spinner />}
+        </Button>
       </form>
     </div>
   );
