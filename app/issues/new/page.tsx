@@ -1,5 +1,6 @@
 "use client";
 
+import { ErrorMessage, Spinner } from "@/app/components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
 import { Button, Callout, TextField } from "@radix-ui/themes";
@@ -10,8 +11,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
-import ErrorMessage from "../../components/ErrorMessage";
-import Spinner from "../../components/Spinner";
 import { createIssueSchema } from "../../validationSchema";
 
 const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
