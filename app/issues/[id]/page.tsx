@@ -24,12 +24,12 @@ const IsseDetailPage = async ({ params }: Props) => {
   }
   await delay(2000);
   return (
-    <Grid columns={{ initial: "1", md: "2" }} gap="5">
-      <Box>
+    <Grid columns={{ initial: "1", sm: "5" }} gap="5">
+      <Box className={`lg:col-span-4`}>
         <IssueDetails issue={issue} />
       </Box>
       <Box>
-        <Flex className={`space-x-2`}>
+        <Flex direction="column" gap="4">
           <IssueEditButton issueId={issue.id} />
           <IssueDeleteButton issueId={issue.id} />
         </Flex>
