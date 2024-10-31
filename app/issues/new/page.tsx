@@ -1,7 +1,10 @@
-"use client";
+import dynamic from "next/dynamic";
+import IssueFormSkeleton from "../_components/IssueFormSkeleton";
 
-import "easymde/dist/easymde.min.css";
-import IssueFormPage from "../_components/IssueForm";
+const IssueFormPage = dynamic(() => import("../_components/IssueForm"), {
+  ssr: false,
+  loading: () => <IssueFormSkeleton />,
+});
 
 const NewIssuePage = () => {
   return <IssueFormPage />;

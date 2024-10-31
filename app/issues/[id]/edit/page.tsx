@@ -1,6 +1,15 @@
 import { notFound } from "next/navigation";
 import prisma from "../../../../prisma/client";
-import IssueFormPage from "../../_components/IssueForm";
+// to solve Error: navigator is not defined
+//import IssueFormPage from "../../_components/IssueForm";
+
+import dynamic from "next/dynamic";
+import IssueFormSkeleton from "./loading";
+
+const IssueFormPage = dynamic(() => import("../../_components/IssueForm"), {
+  ssr: false,
+  loading: () => <IssueFormSkeleton />,
+});
 
 //interface Props {
 //  params: { id: string };
