@@ -12,13 +12,13 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
-import { createIssueSchema } from "../../validationSchema";
+import { issueSchema } from "../../validationSchema";
 
 const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
   ssr: false,
 });
 
-type IssueForm = z.infer<typeof createIssueSchema>;
+type IssueForm = z.infer<typeof issueSchema>;
 
 //interface Props {
 //issue?: Issue
@@ -34,14 +34,20 @@ const IssueFormPage = ({ issue }: { issue?: Issue }) => {
     handleSubmit,
     formState: { errors },
   } = useForm<IssueForm>({
-    resolver: zodResolver(createIssueSchema),
+    resolver: zodResolver(issueSchema),
   });
 
   const onSubmit = handleSubmit(async (data) => {
     try {
       setSubmitting(true);
-      await axios.post("/api/issues", data);
+      if (issue) {
+        await axios.patch(`/api/issues/${issue.id}`, data);
+      } else {
+        await axios.post("/api/issues", data);
+      }
       router.push("/issues");
+      // force refresh
+      router.refresh();
     } catch (error) {
       setSubmitting(false);
       setError("An unexpected error occurred.");
@@ -65,9 +71,7 @@ const IssueFormPage = ({ issue }: { issue?: Issue }) => {
           placeholder="Title"
           {...register("title")}
         ></TextField.Root>
-
         <ErrorMessage>{errors.title?.message}</ErrorMessage>
-
         <Controller
           name="description"
           defaultValue={issue?.description}
@@ -79,7 +83,7 @@ const IssueFormPage = ({ issue }: { issue?: Issue }) => {
         <ErrorMessage>{errors.description?.message}</ErrorMessage>
 
         <Button disabled={isSubmitting}>
-          Submit New issue
+          {issue ? "Update issue" : "Submit New"}
           {isSubmitting && <Spinner />}
         </Button>
       </form>
