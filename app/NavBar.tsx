@@ -1,4 +1,5 @@
 "use client";
+import { Skeleton } from "@/app/components";
 import { ExitIcon } from "@radix-ui/react-icons";
 import {
   Avatar,
@@ -13,7 +14,6 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FaBug } from "react-icons/fa";
-
 const NavBar = () => {
   return (
     <nav className={`border-b px-5 mb-5 py-3`}>
@@ -59,39 +59,39 @@ const NavLink = () => {
 
 const AuthNav = () => {
   const { status, data: session } = useSession();
+  if (status === "loading") return <Skeleton width="3rem" />;
+  if (status === "unauthenticated")
+    return (
+      <Link className="nav-link" href="/api/auth/signin">
+        Log in
+      </Link>
+    );
   return (
     <Box>
-      {status === "authenticated" && (
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger>
-            <Avatar
-              src={session.user?.image!}
-              fallback="?"
-              size="2"
-              radius="full"
-              className="cursor-pointer"
-              referrerPolicy="no-referrer"
-            />
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Content>
-            <DropdownMenu.Label>
-              <Text>{session.user?.email}</Text>
-            </DropdownMenu.Label>
-            <DropdownMenu.Separator />
-            <DropdownMenu.Item color="red" className="justify-between">
-              <Link href="/api/auth/signout">
-                <Text>Log out</Text>
-              </Link>
-              <ExitIcon />
-            </DropdownMenu.Item>
-          </DropdownMenu.Content>
-        </DropdownMenu.Root>
-      )}
-      {status === "unauthenticated" && (
-        <Link className="nav-link" href="/api/auth/signin">
-          Log in
-        </Link>
-      )}
+      <DropdownMenu.Root>
+        <DropdownMenu.Trigger>
+          <Avatar
+            src={session!.user?.image!}
+            fallback="?"
+            size="2"
+            radius="full"
+            className="cursor-pointer"
+            referrerPolicy="no-referrer"
+          />
+        </DropdownMenu.Trigger>
+        <DropdownMenu.Content>
+          <DropdownMenu.Label>
+            <Text>{session!.user?.email}</Text>
+          </DropdownMenu.Label>
+          <DropdownMenu.Separator />
+          <DropdownMenu.Item color="red" className="justify-between">
+            <Link href="/api/auth/signout">
+              <Text>Log out</Text>
+            </Link>
+            <ExitIcon />
+          </DropdownMenu.Item>
+        </DropdownMenu.Content>
+      </DropdownMenu.Root>
     </Box>
   );
 };
