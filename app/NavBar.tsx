@@ -15,12 +15,6 @@ import { usePathname } from "next/navigation";
 import { FaBug } from "react-icons/fa";
 
 const NavBar = () => {
-  const { status, data: session } = useSession();
-  const currentPath = usePathname();
-  const links = [
-    { href: "/", label: "Dashboard" },
-    { href: "/issues/list", label: "Issues" },
-  ];
   return (
     <nav className={`border-b px-5 mb-5 py-3`}>
       <Container>
@@ -29,58 +23,76 @@ const NavBar = () => {
             <Link href="/">
               <FaBug />
             </Link>
-            <ul className={`flex space-x-6`}>
-              {links.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    className={classNames({
-                      "text-stone-900": currentPath === link.href,
-                      "text-stone-500": currentPath !== link.href,
-                      "hover:text-stone-900 transition-colors": true,
-                    })}
-                    href={link.href}
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <NavLink />
           </Flex>
-          <Box>
-            {status === "authenticated" && (
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger>
-                  <Avatar
-                    src={session.user?.image!}
-                    fallback="?"
-                    size="2"
-                    radius="full"
-                    className="cursor-pointer"
-                    referrerPolicy="no-referrer"
-                  />
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content>
-                  <DropdownMenu.Label>
-                    <Text>{session.user?.email}</Text>
-                  </DropdownMenu.Label>
-                  <DropdownMenu.Separator />
-                  <DropdownMenu.Item color="red" className="justify-between">
-                    <Link href="/api/auth/signout">
-                      <Text>Log out</Text>
-                    </Link>
-                    <ExitIcon />
-                  </DropdownMenu.Item>
-                </DropdownMenu.Content>
-              </DropdownMenu.Root>
-            )}
-            {status === "unauthenticated" && (
-              <Link href="/api/auth/signin">Log in</Link>
-            )}
-          </Box>
+          <AuthNav />
         </Flex>
       </Container>
     </nav>
   );
 };
 
+const NavLink = () => {
+  const currentPath = usePathname();
+  const links = [
+    { href: "/", label: "Dashboard" },
+    { href: "/issues/list", label: "Issues" },
+  ];
+  return (
+    <ul className={`flex space-x-6`}>
+      {links.map((link) => (
+        <li key={link.href}>
+          <Link
+            className={classNames({
+              "nav-link": true,
+              "!text-zinc-900": currentPath === link.href,
+            })}
+            href={link.href}
+          >
+            {link.label}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+const AuthNav = () => {
+  const { status, data: session } = useSession();
+  return (
+    <Box>
+      {status === "authenticated" && (
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger>
+            <Avatar
+              src={session.user?.image!}
+              fallback="?"
+              size="2"
+              radius="full"
+              className="cursor-pointer"
+              referrerPolicy="no-referrer"
+            />
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Content>
+            <DropdownMenu.Label>
+              <Text>{session.user?.email}</Text>
+            </DropdownMenu.Label>
+            <DropdownMenu.Separator />
+            <DropdownMenu.Item color="red" className="justify-between">
+              <Link href="/api/auth/signout">
+                <Text>Log out</Text>
+              </Link>
+              <ExitIcon />
+            </DropdownMenu.Item>
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
+      )}
+      {status === "unauthenticated" && (
+        <Link className="nav-link" href="/api/auth/signin">
+          Log in
+        </Link>
+      )}
+    </Box>
+  );
+};
 export default NavBar;
