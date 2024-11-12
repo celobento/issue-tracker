@@ -4,7 +4,7 @@ import IssueSelectFilter from "../_components/IssueSelectFilter";
 
 const ActionButon = () => {
   return (
-    <Flex mb="5" justify="between">
+    <Flex justify="between">
       <IssueSelectFilter />
       <Button>
         <Link href="/issues/new">New Issue</Link>
